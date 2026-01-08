@@ -8,8 +8,10 @@ const connectDB = async () => {
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(error.message);
-    process.exit(1);
+    console.error(`Error: ${error.message}`);
+    // Do NOT exit process on Netlify/Serverless, as it causes "Runtime.ExitError"
+    // and prevents seeing the actual error log.
+    // process.exit(1); 
   }
 };
 

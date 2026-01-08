@@ -45,8 +45,12 @@ connectDB(MONGO_URI);
 
 // ensure admin user exists if env vars provided
 
-const ensureSlugs = require('./utils/ensureSlugs');
-ensureSlugs();
+// const ensureSlugs = require('./utils/ensureSlugs');
+// ensureSlugs(); // Disable backfill on Serverless boot to prevent timeout
+
+if (!MONGO_URI) {
+  console.error("FATAL: MONGO_URI is missing in Environment Variables!");
+}
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/locations", locationRoutes);
