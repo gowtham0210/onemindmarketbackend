@@ -61,7 +61,16 @@ app.use("/api/enquiries", require("./routes/enquiryRoutes"));
 
 
 // basic health route
-app.get("/", (req, res) => res.send("MERN Search Backend is running"));
+app.get("/", (req, res) => {
+  const status = mongoose.connection.readyState;
+  const statusMap = {
+    0: "Disconnected",
+    1: "Connected",
+    2: "Connecting",
+    3: "Disconnecting",
+  };
+  res.send(`MERN Backend Running. DB Status: ${statusMap[status] || status}`);
+});
 
 if (require.main === module) {
   app.listen(PORT, () => {
