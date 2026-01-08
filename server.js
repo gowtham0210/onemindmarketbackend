@@ -21,8 +21,20 @@ app.use(cors({
 app.use(express.json());
 
 // ensure uploads folder exists
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+let uploadDir = path.join(__dirname, "uploads");
+
+// On Netlify/Lambda, root is read-only. We must use /tmp.
+try {
+  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+} catch (err) {
+  if (err.code === 'EROFS') {
+    console.log("Read-only filesystem detected. Switching upload dir to /tmp/uploads");
+    uploadDir = "/tmp/uploads";
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+  } else {
+    throw err;
+  }
+}
 
 app.use("/uploads", express.static(uploadDir));
 
